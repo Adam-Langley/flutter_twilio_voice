@@ -179,7 +179,7 @@ public class FlutterTwilioVoicePlugin implements FlutterPlugin, MethodChannel.Me
     }
 
     private void handleReject() {
-        sendPhoneCallEvents("LOG|Call Rejected");
+        sendPhoneCallEvents("LOG|INFO|Call Rejected");
         SoundPoolManager.getInstance(activity).stopRinging();
         SoundPoolManager.getInstance(activity).playDisconnect();
     }
@@ -365,7 +365,7 @@ public class FlutterTwilioVoicePlugin implements FlutterPlugin, MethodChannel.Me
             result.success(true);
         } else if (call.method.equals("makeCall")) {
             Log.d(TAG, "Making new call");
-            sendPhoneCallEvents("LOG|Making new call");
+            sendPhoneCallEvents("LOG|INFO|Making new call");
             final HashMap<String, String> params = new HashMap<>();
             Log.d(TAG, "calling");
             Log.d(TAG, call.argument("to").toString());
@@ -381,7 +381,7 @@ public class FlutterTwilioVoicePlugin implements FlutterPlugin, MethodChannel.Me
             String id = call.argument("id");
             String name = call.argument("name");
             if (id != null && name != null && !pSharedPref.contains(id)) {
-                sendPhoneCallEvents("LOG|Registering client " + id + ":" + name);
+                sendPhoneCallEvents("LOG|INFO|Registering client " + id + ":" + name);
                 SharedPreferences.Editor edit = pSharedPref.edit();
                 edit.putString(id, name);
                 edit.apply();
@@ -389,7 +389,7 @@ public class FlutterTwilioVoicePlugin implements FlutterPlugin, MethodChannel.Me
         } else if (call.method.equals("unregisterClient")) {
             String id = call.argument("id");
             if (id != null) {
-                sendPhoneCallEvents("LOG|Unegistering" + id);
+                sendPhoneCallEvents("LOG|INFO|Unegistering" + id);
                 SharedPreferences.Editor edit = pSharedPref.edit();
                 edit.remove(id);
                 edit.apply();
@@ -397,7 +397,7 @@ public class FlutterTwilioVoicePlugin implements FlutterPlugin, MethodChannel.Me
         } else if (call.method.equals("defaultCaller")) {
             String caller = call.argument("defaultCaller");
             if (caller != null) {
-                sendPhoneCallEvents("LOG|defaultCaller is " + caller);
+                sendPhoneCallEvents("LOG|INFO|defaultCaller is " + caller);
                 SharedPreferences.Editor edit = pSharedPref.edit();
                 edit.putString("defaultCaller", caller);
                 edit.apply();
@@ -405,7 +405,7 @@ public class FlutterTwilioVoicePlugin implements FlutterPlugin, MethodChannel.Me
         } else if (call.method.equals("hasMicPermission")) {
             result.success(this.checkPermissionForMicrophone());
         } else if (call.method.equals("requestMicPermission")) {
-            sendPhoneCallEvents("LOG|requesting mic permission");
+            sendPhoneCallEvents("LOG|INFO|requesting mic permission");
             if (!this.checkPermissionForMicrophone()) {
                 boolean hasAccess = this.requestPermissionForMicrophone();
                 result.success(hasAccess);
@@ -530,7 +530,7 @@ public class FlutterTwilioVoicePlugin implements FlutterPlugin, MethodChannel.Me
                 Log.d(TAG, "Connect failure");
                 String message = String.format("Call Error: %d, %s", error.getErrorCode(), error.getMessage());
                 Log.e(TAG, message);
-                sendPhoneCallEvents("LOG|" + message);
+                sendPhoneCallEvents("LOG|INFO|" + message);
 
             }
 
@@ -538,7 +538,7 @@ public class FlutterTwilioVoicePlugin implements FlutterPlugin, MethodChannel.Me
             public void onConnected(Call call) {
                 // setAudioFocus(true);
                 Log.d(TAG, "onConnected");
-//                eventSink.success("LOG|Connected");
+//                eventSink.success("LOG|INFO|Connected");
                 activeCall = call;
                 /*
                  * Enable changing the volume using the up/down keys during a conversation
@@ -664,13 +664,13 @@ public class FlutterTwilioVoicePlugin implements FlutterPlugin, MethodChannel.Me
     }
 
     private boolean checkPermissionForMicrophone() {
-        eventSink.success("LOG|checkPermissionForMicrophone");
+        eventSink.success("LOG|INFO|checkPermissionForMicrophone");
         int resultMic = ContextCompat.checkSelfPermission(this.context, Manifest.permission.RECORD_AUDIO);
         return resultMic == PackageManager.PERMISSION_GRANTED;
     }
 
     private boolean requestPermissionForMicrophone() {
-        eventSink.success("LOG|requestPermissionForMicrophone");
+        eventSink.success("LOG|INFO|requestPermissionForMicrophone");
         if (ActivityCompat.shouldShowRequestPermissionRationale(this.activity, Manifest.permission.RECORD_AUDIO)) {
             eventSink.success("RequestMicrophoneAccess");
             return false;
